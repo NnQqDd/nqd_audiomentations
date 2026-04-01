@@ -1,0 +1,4 @@
+numpy
+audiomentations
+pyrubberband
+pyroomacoustics
