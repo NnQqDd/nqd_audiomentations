@@ -2,7 +2,7 @@ import random
 import numpy as np
 
 
-def rms(wave: np.ndarray, eps: float = 1e-9) -> np.ndarray:
+def rms(wave: np.ndarray, eps=1e-9) -> np.ndarray:
     return np.sqrt(np.mean(wave ** 2, axis=0, keepdims=True) + eps)
 
 
@@ -26,10 +26,10 @@ def random_pad(wave, length):
     return wave
 
 
-def peak_normalize(wave: np.ndarray, optional=True):
+def peak_normalize(wave: np.ndarray, optional=True, eps=1e-9):
     peak = np.max(np.abs(wave))
     if peak > 1 or not optional:
-        wave /= (peak + 1e-9)
+        wave /= (peak + eps)
     return wave
 
 
@@ -38,7 +38,7 @@ def add_noise(
     noise_wave: np.ndarray,
     min_snr: float,
     max_snr: float,
-    repeat: bool = True,
+    repeat: bool=True,
 ) -> np.ndarray:
     speech_len = speech_wave.shape[0]
     noise_len = noise_wave.shape[0]
