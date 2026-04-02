@@ -110,7 +110,7 @@ class PeakNormalize():
 			samples = samples / (peak + self.eps)
 		return samples
 
-	def __init__(self, samples, sample_rate):
+	def __call__(self, samples, sample_rate):
 		return self.apply(samples, sample_rate)
 
 
