@@ -9,9 +9,10 @@ class RubberBandPitchShift(BaseWaveformTransform):
 		super().__init__(p)
 		self.min_semitones = min_semitones
 		self.max_semitones = max_semitones
-		self.p = 0.5
+		self.p = p
 
 	def randomize_parameters(self, a, b): # Skip samples, sample_rate
+		super().randomize_parameters(a, b)
 		pitch = np.random.uniform(self.min_semitones, self.max_semitones)
 		self.parameters["pitch"] = pitch
 
@@ -29,9 +30,10 @@ class RubberBandTimeStretch(BaseWaveformTransform):
 		self.min_rate = min_rate
 		self.max_rate = max_rate
 		self.fixed_length = leave_length_unchanged
-		self.p = 0.5
+		self.p = p
 
 	def randomize_parameters(self, a, b):
+		super().randomize_parameters(a, b)
 		self.parameters["rate"] = np.random.uniform(self.min_rate, self.max_rate)
 
 	def apply(self, pre_samples, sample_rate):
