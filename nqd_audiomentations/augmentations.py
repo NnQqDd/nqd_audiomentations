@@ -79,7 +79,6 @@ class SyntheticReverb():
 		},
 	}
 	def __init__(self, presets=None, p=0.5):
-		super().__init__(p)
 		if not presets:
 			self.presets = self.DEFAULT_PRESETS
 		else:
@@ -91,7 +90,7 @@ class SyntheticReverb():
 		if random.random() >= self.p:
 			return samples
 		pre_length = len(samples)
-		rirs = generate_rirs(presets=self.presets, sample_rate=sample_rate, n_sources=1, n_mics=1) 
+		rirs = generate_rirs(presets=self.presets, fs=sample_rate, n_sources=1, n_mics=1) 
 		samples = fftconvolve(samples, rirs[0][0], mode="full")
 		samples = samples[:pre_length]
 		return samples
