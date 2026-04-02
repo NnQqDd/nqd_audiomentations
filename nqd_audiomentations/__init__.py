@@ -1,6 +1,6 @@
 from . import legacy
 from . import rir_sim
-from augmentations import *
+from .augmentations import *
 
 __all__ = [
 	"legacy", 
