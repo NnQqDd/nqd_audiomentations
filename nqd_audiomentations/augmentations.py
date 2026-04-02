@@ -5,7 +5,7 @@ from audiomentations import HighPassFilter, LowPassFilter, Compose
 import pyrubberband as pyrb
 from scipy.signal import fftconvolve
 import librosa
-from rir_sim import generate_rirs
+from .rir_sim import generate_rirs
 
 
 class RubberBandPitchShift(BaseWaveformTransform):
