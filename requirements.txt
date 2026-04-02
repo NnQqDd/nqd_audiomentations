@@ -2,3 +2,5 @@ numpy
 audiomentations
 pyrubberband
 pyroomacoustics
+scipy
+librosa

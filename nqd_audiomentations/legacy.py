@@ -2,11 +2,13 @@ import random
 import numpy as np
 
 
-def rms(wave: np.ndarray, eps=1e-9) -> np.ndarray:
-    return np.sqrt(np.mean(wave ** 2, axis=0, keepdims=True) + eps)
+def rms(wave: np.ndarray) -> np.ndarray:
+    return np.sqrt(np.mean(wave ** 2, axis=0, keepdims=True))
 
 
 def random_select_segment(wave, length):
+    if len(wave) <= length:
+        return wave
     if random.random() <= 0.5:
         start = random.randint(0, wave.shape[0] - length)
         wave = wave[start:start + length]
@@ -29,7 +31,7 @@ def random_pad(wave, length):
 def peak_normalize(wave: np.ndarray, optional=True, eps=1e-9):
     peak = np.max(np.abs(wave))
     if peak > 1 or not optional:
-        wave /= (peak + eps)
+        wave = wave / (peak + eps)
     return wave
 
 
@@ -39,6 +41,7 @@ def add_noise(
     min_snr: float,
     max_snr: float,
     repeat: bool=True,
+    eps: float=1e-9
 ) -> np.ndarray:
     speech_len = speech_wave.shape[0]
     noise_len = noise_wave.shape[0]
@@ -48,15 +51,13 @@ def add_noise(
         reps = int(np.ceil(speech_len/ noise_len))
         noise_wave = np.tile(noise_wave, reps)[:speech_len]
     else:
-        pad_left = random.randint(0, (speech_len - noise_len))
-        pad_right = (speech_len - noise_len) - pad_left
-        noise_wave = np.pad(noise_wave, (pad_left, pad_right), mode="constant")
-
+        noise_wave = random_pad(noise_wave, speech_len)
+        
     snr_db = random.uniform(min_snr, max_snr)
     rms_s = rms(speech_wave)
     rms_n = rms(noise_wave)
 
-    gain = (rms_s / (rms_n + 1e-9)) * (10 ** (-snr_db / 20))
+    gain = (rms_s / (rms_n + eps)) * (10 ** (-snr_db / 20))
     noise_scaled = noise_wave * gain
 
     mixed = speech_wave + noise_scaled

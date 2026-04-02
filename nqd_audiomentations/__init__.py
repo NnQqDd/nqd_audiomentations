@@ -6,5 +6,8 @@ __all__ = [
 	"legacy", 
 	"rir_sim", 
 	"RubberBandPitchShift",
-	"RubberBandTimeStretch"
+	"RubberBandTimeStretch",
+    "SyntheticReverb",
+    "PolarInversion",
+    "PhoneCallEffect"
 ]
