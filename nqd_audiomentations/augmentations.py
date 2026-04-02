@@ -99,17 +99,19 @@ class SyntheticReverb():
 		return self.apply(samples, sample_rate)
 
 
-class PolarInversion():
-	def __init__(self, p=0.5):
-		self.p = p
-
-	def apply(self, samples, _):
-		if random.random() >= self.p:
-			return samples
-		return -samples
+class PeakNormalize():
+	def __init__(self, eps=1e-9, optional=True):
+		self.eps = eps
+		self.optional = optional
 	
-	def __call__(self, samples, _):
-		return self.apply(samples, _)
+	def apply(self, samples, _):		
+		peak = np.max(np.abs(samples))
+		if peak > 1 or not self.optional:
+			samples = samples / (peak + self.eps)
+		return samples
+
+	def __init__(self, samples, sample_rate):
+		return self.apply(samples, sample_rate)
 
 
 class PhoneCallEffect():
