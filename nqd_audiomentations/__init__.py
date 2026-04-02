@@ -8,6 +8,6 @@ __all__ = [
 	"RubberBandPitchShift",
 	"RubberBandTimeStretch",
     "SyntheticReverb",
-    "PolarInversion",
+    "PeakNormalize",
     "PhoneCallEffect"
 ]
