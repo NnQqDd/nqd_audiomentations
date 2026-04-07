@@ -9,5 +9,6 @@ __all__ = [
 	"RubberBandTimeStretch",
     "SyntheticReverb",
     "PeakNormalize",
-    "PhoneCallEffect"
+    "PhoneCallEffect",
+    "NQDBackgroundNoise",
 ]

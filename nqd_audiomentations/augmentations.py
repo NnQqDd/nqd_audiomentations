@@ -134,8 +134,56 @@ class PhoneCallEffect():
 	def __call__(self, samples, sample_rate):
 		return self.apply(samples, sample_rate)
 	
-'''
-# Phonecall effect
-from audiomentations import Compose, HighPassFilter, LowPassFilter
 
-'''
+def rms(x, eps=1e-9):
+    return np.sqrt(np.mean(x**2) + eps)
+
+
+class NQDBackgroundNoise(BaseWaveformTransform):
+    def __init__(
+        self,
+        noise_paths,
+        min_snr_db=5.0,
+        max_snr_db=20.0,
+        eps=1e-9,
+		p=0.5,
+    ):
+        super().__init__(p)
+        self.noise_paths = noise_paths
+        self.min_snr_db = min_snr_db
+        self.max_snr_db = max_snr_db
+        self.eps = eps
+
+    def randomize_parameters(self, samples, sample_rate):
+        super().randomize_parameters(samples, sample_rate)
+
+        self.parameters["snr_db"] = random.uniform(
+            self.min_snr_db, self.max_snr_db
+        )
+        self.parameters["noise_path"] = random.choice(self.noise_paths)
+
+    def apply(self, samples, sample_rate):
+        noise_path = self.parameters["noise_path"]
+        snr_db = self.parameters["snr_db"]
+
+        noise = librosa.load(noise_path, mono=True, sr=sample_rate)[0]
+
+        target_len = len(samples)
+        noise_len = len(noise)
+		
+        if noise_len >= target_len:
+            start = random.randint(0, noise_len - target_len)
+            noise = noise[start : start + target_len]
+        else:
+            repeats = int(np.ceil(target_len / noise_len))
+            noise = np.tile(noise, repeats)[:target_len]
+
+        clean_rms = rms(samples)
+        noise_rms = rms(noise)
+
+        desired_noise_rms = clean_rms / (10 ** (snr_db / 20))
+        noise = noise * (desired_noise_rms / (noise_rms + self.eps))
+
+        mixed = samples + noise
+
+        return mixed
