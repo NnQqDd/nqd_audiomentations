@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "nqd-audiomentations"
+version = "1.1.0"
+description = "Audio augmentation utilities"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["audio", "augmentation", "speech", "signal-processing"]
+authors = [
+    { name = "Quang Duy" }
+]
+
+dependencies = [
+    "numpy",
+    "audiomentations",
+    "pyrubberband",
+    "pyroomacoustics",
+    "scipy",
+    "librosa"
+]
+
+[project.urls]
+Homepage = "https://github.com/NnQqDd/nqd_audiomentations"
+
+[tool.setuptools.packages.find]
+where = ["."]
