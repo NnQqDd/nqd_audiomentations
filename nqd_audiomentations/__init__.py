@@ -5,8 +5,8 @@ from .augmentations import *
 __all__ = [
 	"legacy", 
 	"rir_sim", 
-	"RubberBandPitchShift",
-	"RubberBandTimeStretch",
+	# "RubberBandPitchShift",
+	# "RubberBandTimeStretch",
     "SyntheticReverb",
     "PeakNormalize",
     "PhoneCallEffect",
