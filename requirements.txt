@@ -1,6 +1,6 @@
 numpy
 audiomentations
-pyrubberband
+# pyrubberband
 pyroomacoustics
 scipy
 librosa

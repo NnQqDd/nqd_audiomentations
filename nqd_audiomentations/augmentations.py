@@ -2,57 +2,57 @@ import random
 import numpy as np
 from audiomentations.core.transforms_interface import BaseWaveformTransform
 from audiomentations import HighPassFilter, LowPassFilter, Compose
-import pyrubberband as pyrb
+# import pyrubberband as pyrb
 from scipy.signal import fftconvolve
 import librosa
 from .rir_sim import generate_rirs
 
 
-class RubberBandPitchShift(BaseWaveformTransform):
-	def __init__(self, min_semitones=-5.0, max_semitones=5.0, p=0.5):
-		super().__init__(p)
-		self.min_semitones = min_semitones
-		self.max_semitones = max_semitones
-		self.p = p
+# class RubberBandPitchShift(BaseWaveformTransform):
+# 	def __init__(self, min_semitones=-5.0, max_semitones=5.0, p=0.5):
+# 		super().__init__(p)
+# 		self.min_semitones = min_semitones
+# 		self.max_semitones = max_semitones
+# 		self.p = p
 
-	def randomize_parameters(self, x, y): # Skip samples, sample_rate
-		super().randomize_parameters(x, y)
-		pitch = random.uniform(self.min_semitones, self.max_semitones)
-		self.parameters["pitch"] = pitch
+# 	def randomize_parameters(self, x, y): # Skip samples, sample_rate
+# 		super().randomize_parameters(x, y)
+# 		pitch = random.uniform(self.min_semitones, self.max_semitones)
+# 		self.parameters["pitch"] = pitch
 
-	def apply(self, samples, sample_rate):
-		assert len(samples.shape) == 1, "Input must be a mono numpy waveform!"
-		return pyrb.pitch_shift(
-			samples, 
-			sample_rate, 
-			n_steps=self.parameters["pitch"]
-		)
+# 	def apply(self, samples, sample_rate):
+# 		assert len(samples.shape) == 1, "Input must be a mono numpy waveform!"
+# 		return pyrb.pitch_shift(
+# 			samples, 
+# 			sample_rate, 
+# 			n_steps=self.parameters["pitch"]
+# 		)
 
 
-class RubberBandTimeStretch(BaseWaveformTransform):
-	def __init__(self, min_rate=0.5, max_rate=2.0, leave_length_unchanged=True, p=0.5):
-		super().__init__(p)
-		self.min_rate = min_rate
-		self.max_rate = max_rate
-		self.fixed_length = leave_length_unchanged
-		self.p = p
+# class RubberBandTimeStretch(BaseWaveformTransform):
+# 	def __init__(self, min_rate=0.5, max_rate=2.0, leave_length_unchanged=True, p=0.5):
+# 		super().__init__(p)
+# 		self.min_rate = min_rate
+# 		self.max_rate = max_rate
+# 		self.fixed_length = leave_length_unchanged
+# 		self.p = p
 
-	def randomize_parameters(self, x, y):
-		super().randomize_parameters(x, y)
-		self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
+# 	def randomize_parameters(self, x, y):
+# 		super().randomize_parameters(x, y)
+# 		self.parameters["rate"] = random.uniform(self.min_rate, self.max_rate)
 
-	def apply(self, pre_samples, sample_rate):
-		assert len(pre_samples.shape) == 1, "Input must be a mono numpy waveform!"
-		pre_length = len(pre_samples)
-		post_samples = pyrb.time_stretch(pre_samples, sample_rate, rate=self.parameters["rate"])
+# 	def apply(self, pre_samples, sample_rate):
+# 		assert len(pre_samples.shape) == 1, "Input must be a mono numpy waveform!"
+# 		pre_length = len(pre_samples)
+# 		post_samples = pyrb.time_stretch(pre_samples, sample_rate, rate=self.parameters["rate"])
 		
-		if not self.fixed_length:
-			return post_samples
+# 		if not self.fixed_length:
+# 			return post_samples
 
-		if self.fixed_length and pre_length > len(post_samples):
-			return np.pad(post_samples, (0, pre_length - len(post_samples)), mode='constant')
+# 		if self.fixed_length and pre_length > len(post_samples):
+# 			return np.pad(post_samples, (0, pre_length - len(post_samples)), mode='constant')
 	 	
-		return post_samples[:pre_length] 
+# 		return post_samples[:pre_length] 
 
 
 class SyntheticReverb():
@@ -160,7 +160,10 @@ class NQDBackgroundNoise(BaseWaveformTransform):
         self.parameters["snr_db"] = random.uniform(
             self.min_snr_db, self.max_snr_db
         )
-        self.parameters["noise_path"] = random.choice(self.noise_paths)
+        if len(self.noise_paths) > 0:
+            self.parameters["noise_path"] = random.choice(self.noise_paths)
+        else:
+            self.parameters["noise_path"] = None
 
     def apply(self, samples, sample_rate):
         noise_path = self.parameters["noise_path"]
